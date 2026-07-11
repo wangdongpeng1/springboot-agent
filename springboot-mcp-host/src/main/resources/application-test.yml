@@ -1,0 +1,12 @@
+# 日志配置
+logging:
+  level:
+    io.modelcontextprotocol: DEBUG
+    org.springframework.ai.mcp: DEBUG
+    com.agent.springbootmcphost: DEBUG # 自定义项目日志级别
+
+# 自定义配置
+mcp:
+  rag:
+    url: http://localhost:8906
+    debug-url: http://localhost:8906

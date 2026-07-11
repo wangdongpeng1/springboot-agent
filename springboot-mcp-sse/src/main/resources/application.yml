@@ -1,0 +1,24 @@
+server:
+  port: 9801 # 应用启动端口
+
+spring:
+  application:
+    name: springboot-mcp-sse
+  profiles:
+    include: common  # 继承common配置
+    active: dev  # 默认激活环境
+
+  # AI 配置 (OpenAI 示例，可选)
+  ai:
+    mcp:
+      server:
+        enabled: true
+        name: springboot-mcp-server
+        version: 1.0.0
+        instructions: "This server provides springboot-mcp information tools and over SSE"
+        type: ASYNC  # or ASYNC
+        annotation-scanner:
+          enabled: true
+        sse-endpoint: /api/v1/sse
+        sse-message-endpoint: /api/v1/mcp/messages
+        keep-alive-interval: 30s

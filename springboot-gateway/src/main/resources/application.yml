@@ -1,0 +1,8 @@
+server:
+  port: 9800 # 应用启动端口
+
+spring:
+  application:
+    name: springboot-gateway
+  profiles:
+    active: dev  # 默认激活环境

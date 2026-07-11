@@ -1,0 +1,24 @@
+FROM eclipse-temurin:21-jre-alpine
+ENV LANG=C.UTF-8
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# 创建应用和日志目录
+RUN mkdir -p /agent/logs && chmod 755 /agent/logs
+
+# 修复 Alpine 基础镜像的 nsswitch 残留问题
+RUN rm -f /etc/nsswitch.conf.bak
+
+ENV JAVA_OPTS="-Xms512m -Xmx1g -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m \
+    -Xlog:gc*:file=/agent/logs/gc.log:time,tags:filecount=5,filesize=10m \
+    -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/agent/logs \
+    -Dspring.profiles.active=test -Dlogging.config=/agent/logback.xml -Dserver.port=9800"
+
+ADD springboot-agent/springboot-gateway-0.0.1-SNAPSHOT.jar /agent/app.jar
+COPY logback.xml /agent/logback.xml
+
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+    CMD wget -qO- http://localhost:9800/actuator/health || exit 1
+
+EXPOSE 9800
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /agent/app.jar"]

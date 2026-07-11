@@ -1,0 +1,25 @@
+server:
+  port: 9802 # 应用启动端口
+
+spring:
+  application:
+    name: springboot-mcp-stream
+  profiles:
+    include: common  # 继承common配置
+    active: dev  # 默认激活环境
+
+  # AI 配置 (OpenAI 示例，可选)
+  ai:
+    mcp:
+      server:
+        enabled: true
+        protocol: STREAMABLE
+        name: springboot-mcp-server
+        version: 1.0.0
+        instructions: "This server provides springboot-mcp information tools and over Streamable-HTTP"
+        type: ASYNC  # or ASYNC
+        annotation-scanner:
+          enabled: true
+        streamable-http:
+          mcp-endpoint: /api/v1/mcp
+          keep-alive-interval: 30s

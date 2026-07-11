@@ -1,0 +1,8 @@
+# Actuator 监控端点配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info # 暴露的 actuator 端点
+    health:
+      show-details: always

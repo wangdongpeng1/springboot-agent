@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 日志输出格式 -->
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{trace_id:-N/A}] [%thread] %C{35}:%M:%L: %m %n"/>
+
+    <!-- 日志文件基础名称（不含日期和序号） -->
+    <property name="LOG_FILE" value="/logs/app.log"/>
+
+    <!-- 控制台输出 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 滚动文件输出：按天 + 按大小滚动，并压缩 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}</file>
+
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+
+        <!-- 同时基于时间和文件大小的滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 滚动文件命名模式 -->
+            <!-- %d{yyyy-MM-dd} 按天，%i 是当日的序号（从0开始），.gz 表示压缩 -->
+            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+
+            <!-- 单个日志文件最大 100MB -->
+            <maxFileSize>100MB</maxFileSize>
+
+            <!-- 保留最近 30 天的日志文件 -->
+            <maxHistory>30</maxHistory>
+
+            <!-- 可选：限制归档日志总大小 -->
+            <totalSizeCap>50GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Root Logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

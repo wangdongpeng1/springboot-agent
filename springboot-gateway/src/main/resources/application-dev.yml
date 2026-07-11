@@ -1,0 +1,37 @@
+# 配置示例（推荐）
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: flames-route
+          uri: http://localhost:9802
+          predicates:
+            - Path=/flames/api/v1/mcp/**
+            - Header=Authorization, .+
+
+        - id: mcp-sse-route
+          uri: http://localhost:9801 # MCP服务器的地址
+          predicates:
+            - Path=/api/v1/sse
+            - Query=authorization, .+
+
+        - id: mcp-stream-route
+          uri: http://localhost:9802 # MCP服务器的地址
+          predicates:
+            - Path=/api/v1/mcp
+            - Query=authorization, .+
+
+# 日志配置
+logging:
+  level:
+    # 查看网关路由匹配信息（推荐）
+    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
+
+
+# 自定义配置
+mcp:
+  auth:
+    appid: 8E60AF18FBCE4E52820D
+    appSecret: A87869980A794A7A9E49909CDEB0B155
+    url: http://127.0.0.1:8080
+    switch: false

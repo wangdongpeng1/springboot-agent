@@ -1,0 +1,25 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: springboot-ocr
+
+# MinerU API 配置
+mineru:
+  api:
+    base-url: http://localhost:8000   # MinerU Docker API 地址
+
+# Chinese-CLIP API 配置
+clip:
+  api:
+    base-url: http://localhost:8000   # Chinese-CLIP Docker API 地址
+  analysis:
+    match-threshold: 0.5              # 图文匹配阈值（0-1之间，默认0.5）
+
+# MinIO配置
+minio:
+  endpoint: http://localhost:9000
+  access-key: admin
+  secret-key: minio123456
+  bucket-name: data

@@ -1,0 +1,76 @@
+server:
+  port: 8080 # 应用启动端口
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: springboot-rag
+
+  data:
+    #集成redis
+    redis:
+      host: localhost
+      port: 6380
+      timeout: 10s
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 2
+
+  # AI 配置
+  ai:
+    chat:
+      # Redis 记忆配置
+      memory:
+        redis:
+          index-name: chat-memory-idx
+          key-prefix: "chat-memory:"
+          time-to-live: 7d    # 例如：24h / 7d / 30d
+          initialize-schema: true
+          max-conversation-ids: 1000
+          max-messages-per-conversation: 1000
+    model:
+      chat: ollama
+      embedding: ollama
+    # Ollama 配置
+    ollama:
+      base-url: http://localhost:11434
+      init:
+        pull-model-strategy: never # 禁止自动拉取
+      chat:
+        model: qwen2.5:7b
+        keep-alive: 5m
+      embedding:
+        model: nomic-embed-text
+        keep-alive: 5m
+        truncate: true
+    vectorstore:
+      # Milvus 配置
+      milvus:
+        client:
+          host: "localhost"
+          port: 19530
+          username: "root"
+          password: "Milvus"
+        databaseName: "default"
+        collectionName: "vector_store"
+        initialize-schema: true
+        embeddingDimension: 768
+        indexType: IVF_FLAT
+        metricType: COSINE
+#      # Neo4j 配置
+#      neo4j:
+#        initialize-schema: true
+#        database-name: neo4j
+#        index-name: custom-index
+#        embedding-dimension: 768
+#        distance-type: cosine
+
+  # Neo4j 客户端
+  neo4j:
+    uri: bolt://localhost:7687
+    authentication:
+      username: neo4j
+      password: neo4jneo4j

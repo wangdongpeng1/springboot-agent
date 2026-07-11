@@ -1,0 +1,12 @@
+server:
+  port: 8090 # 应用启动端口
+
+spring:
+  application:
+    name: springboot-sentinel
+
+  cloud:
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: localhost:8080
