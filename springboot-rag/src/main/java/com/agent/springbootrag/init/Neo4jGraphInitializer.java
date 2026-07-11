@@ -145,16 +145,30 @@ public class Neo4jGraphInitializer implements ApplicationRunner {
         log.info("Neo4j 图谱初始化完成：4 种化学品, 4 种危害, 5 种防护用品, 3 项法规");
     }
 
+    private static final int MAX_RETRIES = 3;
+    private static final long RETRY_INTERVAL_MS = 5000;
+
     private boolean hasExistingData() {
-        try {
-            Optional<Long> count = neo4jClient
-                    .query("MATCH (c:Chemical) RETURN count(c) AS cnt")
-                    .fetchAs(Long.class)
-                    .one()
-                    .map(cnt -> cnt);
-            return count.orElse(0L) > 0;
-        } catch (Exception e) {
-            return false;
+        for (int i = 1; i <= MAX_RETRIES; i++) {
+            try {
+                Optional<Long> count = neo4jClient
+                        .query("MATCH (c:Chemical) RETURN count(c) AS cnt")
+                        .fetchAs(Long.class)
+                        .one()
+                        .map(cnt -> cnt);
+                return count.orElse(0L) > 0;
+            } catch (Exception e) {
+                log.warn("Neo4j 连接检查失败（第 {}/{} 次）: {}", i, MAX_RETRIES, e.getMessage());
+                if (i < MAX_RETRIES) {
+                    try {
+                        Thread.sleep(RETRY_INTERVAL_MS);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return false;
+                    }
+                }
+            }
         }
+        return false;
     }
 }

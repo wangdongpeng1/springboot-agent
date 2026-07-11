@@ -53,9 +53,7 @@ function ChatPanel({ onGraphUpdate }: Props) {
       const params = new URLSearchParams({ question })
       if (conversationId) params.append('conversationId', conversationId)
 
-      const res = await axios.get<ChatResponse>(
-        `http://localhost:8080/rag/ask-with-graph?${params}`
-      )
+      const res = await axios.get<ChatResponse>(`/rag/ask-with-graph?${params}`)
 
       const elapsed = Math.round(performance.now() - startTime)
       setConversationId(res.data.conversationId)

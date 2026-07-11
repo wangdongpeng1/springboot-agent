@@ -84,15 +84,29 @@ public class MilvusDataInitializer implements ApplicationRunner {
         log.info("Milvus 初始化完成，写入 {} 条 SDS 文档", docs.size());
     }
 
+    private static final int MAX_RETRIES = 3;
+    private static final long RETRY_INTERVAL_MS = 5000;
+
     private boolean hasExistingData() {
-        try {
-            List<Document> results = milvus.similaritySearch(
-                    SearchRequest.builder().query("SDS").topK(1).build()
-            );
-            return results != null && !results.isEmpty();
-        } catch (Exception e) {
-            return false;
+        for (int i = 1; i <= MAX_RETRIES; i++) {
+            try {
+                List<Document> results = milvus.similaritySearch(
+                        SearchRequest.builder().query("SDS").topK(1).build()
+                );
+                return results != null && !results.isEmpty();
+            } catch (Exception e) {
+                log.warn("Milvus 连接检查失败（第 {}/{} 次）: {}", i, MAX_RETRIES, e.getMessage());
+                if (i < MAX_RETRIES) {
+                    try {
+                        Thread.sleep(RETRY_INTERVAL_MS);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return false;
+                    }
+                }
+            }
         }
+        return false;
     }
 
     private Document doc(String content, String id, String section) {
