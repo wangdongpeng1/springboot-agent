@@ -1,6 +1,5 @@
 package com.agent.springbootrag.rag.service;
 
-import com.agent.springbootrag.controller.dto.ChatResponse;
 import com.agent.springbootrag.controller.dto.GraphData;
 import com.agent.springbootrag.controller.dto.GraphData.GraphEdge;
 import com.agent.springbootrag.controller.dto.GraphData.GraphNode;
@@ -24,6 +23,8 @@ import org.springframework.ai.rag.retrieval.join.DocumentJoiner;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import reactor.core.publisher.Flux;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,9 +44,14 @@ public class GraphChatService {
     private final ChatMemory chatMemory;
 
     /**
-     * 对话并返回图谱结构化数据（供前端可视化）
+     * 流式问答结果：图谱数据 + LLM token 流
      */
-    public ChatResponse askWithGraph(String question, String conversationId) {
+    public record StreamResult(GraphData graphData, Flux<String> tokenStream) {}
+
+    /**
+     * GraphRAG 主管线：检索 → 图谱提取 → 流式 LLM
+     */
+    public StreamResult askWithGraph(String question, String conversationId) {
         // 0. 指代消解
         String enrichedQuestion = enrichWithContext(question, conversationId);
         log.info("[GraphRAG] 原始问题: '{}', 增强后: '{}'", question, enrichedQuestion);
@@ -126,15 +132,16 @@ public class GraphChatService {
                 "graph", graphContext
         ));
 
-        // 12. LLM
-        String answer = chatClient.prompt(prompt)
+        // 12. 流式输出 LLM
+        Flux<String> tokenStream = chatClient.prompt(prompt)
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-                .call()
+                .stream()
                 .content();
 
         // 13. 提取图谱数据（从原始 Neo4j 结果提取，不受 rerank/topK 截断）
         GraphData graphData = extractGraphData(allNeo4jDocs);
-        return new ChatResponse(answer, conversationId, graphData);
+
+        return new StreamResult(graphData, tokenStream);
     }
 
     // ==================== 图谱数据提取 ====================
