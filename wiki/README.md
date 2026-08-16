@@ -730,3 +730,99 @@ docker run -d `
 # API 端点：http://localhost:9000
 ```
 
+## Kafka
+
+官网：https://kafka.apache.org/41/
+
+### 快速启动
+
+1. 拉取镜像并启动
+
+> 在终端执行下面的命令，Docker会自动下载官方镜像并启动一个Kafka容器，暴露本地的9092端口
+
+```powershell
+docker run -d --name=kafka -p 9092:9092 apache/kafka
+```
+
+2. 验证环境
+
+> 可以进入容器执行命令，验证Kafka是否正常运行
+
+```powershell
+# 查看集群ID，确认启动成功
+docker exec -ti kafka /opt/kafka/bin/kafka-cluster.sh cluster-id --bootstrap-server :9092
+```
+
+3. 测试收发消息
+
+- 创建主题（Topic）：
+
+```powershell
+docker exec -ti kafka /opt/kafka/bin/kafka-topics.sh --create --topic quickstart-events --bootstrap-server localhost:9092
+```
+
+- 启动生产者发送消息：运行后，在终端里每输入一行文字，就发送一条消息
+
+```powershell
+docker exec -ti kafka /opt/kafka/bin/kafka-console-producer.sh --topic quickstart-events --bootstrap-server localhost:9092
+>这是第一条消息
+>这是第二条消息
+```
+
+- 启动消费者读取消息：新开一个终端运行，就能看到刚刚发送的消息列表
+
+```powershell
+docker exec -ti kafka /opt/kafka/bin/kafka-console-consumer.sh --topic quickstart-events --from-beginning --bootstrap-server localhost:9092
+```
+
+### 生产配置
+
+生产级 docker run 启动命令
+
+```powershell
+# 1. 创建一个Docker卷，用于持久化Kafka数据
+docker volume create kafka-data
+
+# 2. 启动Kafka容器
+docker run -d \
+  --name kafka \
+  --restart always \
+  -p 9092:9092 \
+  -v kafka-data:/var/lib/kafka/data \
+  -e KAFKA_NODE_ID=1 \
+  -e KAFKA_PROCESS_ROLES=broker,controller \
+  -e KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093 \
+  -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 \
+  -e KAFKA_CONTROLLER_QUORUM_VOTERS=1@localhost:9093 \
+  -e KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT \
+  -e KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER \
+  -e KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT \
+  -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
+  -e KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1 \
+  -e KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1 \
+  -e CLUSTER_ID="MkU3OEVBNTcwNTJENDM2Qk" \
+  apache/kafka:latest
+```
+
+常用配置项
+
+### Kafka Docker 启动参数说明
+
+| 参数 | 示例值 | 作用说明 |
+| :--- | :--- | :--- |
+| `KAFKA_NODE_ID` | `1` | 集群中此节点的唯一 ID，不同节点必须不同 |
+| `KAFKA_PROCESS_ROLES` | `broker,controller` | 节点角色，`broker` 存数据，`controller` 管集群元数据 |
+| `KAFKA_LISTENERS` | `PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093` | 容器内部监听的地址和端口，`0.0.0.0` 表示监听所有网卡 |
+| `KAFKA_ADVERTISED_LISTENERS` | `PLAINTEXT://localhost:9092` | **告诉客户端用哪个地址访问**<br>• 同机可用 `localhost`<br>• 跨机必须改为宿主机 IP（如 `192.168.1.90:9092`） |
+| `KAFKA_CONTROLLER_QUORUM_VOTERS` | `1@localhost:9093` | Controller 集群成员列表，格式：`ID@主机:端口` |
+| `KAFKA_LISTENER_SECURITY_PROTOCOL_MAP` | `CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT` | 监听器名称 → 安全协议映射，`PLAINTEXT` 表示明文 |
+| `KAFKA_CONTROLLER_LISTENER_NAMES` | `CONTROLLER` | 指定 Controller 内部通信用哪个监听器 |
+| `KAFKA_INTER_BROKER_LISTENER_NAME` | `PLAINTEXT` | 指定 Broker 之间通信用哪个监听器 |
+| `KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR` | `1` | 消费者 offset 主题副本数，**单节点必须设为 1** |
+| `KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR` | `1` | 事务日志主题副本数，**单节点必须设为 1** |
+| `KAFKA_TRANSACTION_STATE_LOG_MIN_ISR` | `1` | 事务日志最小同步副本数，**单节点必须设为 1** |
+| `CLUSTER_ID` | `"MkU3OEVBNTcwNTJENDM2Qk"` | KRaft 集群唯一 ID，可用 `kafka-storage.sh random-uuid` 生成 |
+
+
+
+

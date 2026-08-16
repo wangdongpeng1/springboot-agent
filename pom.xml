@@ -17,6 +17,7 @@
 
     <modules>
         <module>springboot-sentinel</module>
+        <module>springboot-kafka</module>
         <module>springboot-gateway</module>
         <module>springboot-mcp-host</module>
         <module>springboot-mcp-sse</module>

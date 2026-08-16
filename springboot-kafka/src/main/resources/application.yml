@@ -1,0 +1,25 @@
+server:
+  port: 9090 # ??????
+
+spring:
+  application:
+    name: springboot-kafka
+  #  Kafka ??
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: task-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      # ?????????????
+      auto-offset-reset: earliest
+      # ?????1????????
+      max-poll-records: 1
+    listener:
+      # ???????????1???????????
+      concurrency: 1
+      # ????Offset?????????????
+      ack-mode: manual
