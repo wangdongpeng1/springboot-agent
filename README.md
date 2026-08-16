@@ -16,6 +16,7 @@
 | Neo4j | - | 图数据库 |
 | Redis | - | 缓存 & 会话记忆 |
 | MinIO | - | 对象存储 |
+| Kafka | - | 异步消息队列 |
 | Docker | eclipse-temurin:21 | 容器化部署 |
 
 ## 项目结构
@@ -25,6 +26,7 @@ springboot-agent/
 ├── springboot-gateway/        # API 网关
 ├── springboot-rag/            # RAG 增强生成
 ├── springboot-sentinel/       # 流量治理
+├── springboot-kafka/          # Kafka 异步任务队列
 ├── springboot-mcp-host/       # MCP 客户端（工具库）
 ├── springboot-mcp-sse/        # MCP Server（SSE 协议）
 ├── springboot-mcp-stream/     # MCP Server（Streamable-HTTP 协议）
@@ -63,6 +65,19 @@ springboot-agent/
 - 端口：`8090`
 - 核心能力：流量控制、熔断降级、系统负载保护
 - 内置 Sentinel Dashboard（`sentinel-dashboard-1.8.9.jar`）用于可视化监控
+
+### springboot-kafka — Kafka 异步任务队列
+
+基于 **Spring Kafka** 实现的异步任务生产与消费示例服务，用于演示任务提交、顺序消费和手动提交 Offset。
+
+- 端口：`9090`
+- Kafka 地址：`localhost:9092`
+- Topic：`task-topic`，默认 `1` 个分区、`1` 个副本，用于保证单机环境下全局顺序处理
+- 消费组：`task-group`
+- REST 接口：
+  - `POST /api/tasks`：提交单个任务，Body 示例：`"hello task"`
+  - `POST /api/tasks/batch`：批量提交任务，Body 示例：`["task1", "task2", "task3"]`
+- 消费策略：`concurrency: 1`、`max-poll-records: 1`、`ack-mode: manual`，任务处理成功后才手动提交 Offset，失败时保留消息用于重试
 
 ### springboot-mcp-host — MCP 客户端
 
@@ -110,6 +125,7 @@ springboot-agent/
 - Milvus（RAG 模块依赖）
 - Redis（RAG 模块依赖）
 - MinIO（OCR 模块依赖）
+- Kafka（Kafka 模块依赖）
 
 ### 编译打包
 
