@@ -1,25 +1,27 @@
 server:
-  port: 9090 # ??????
+  port: 19090 # 应用启动端口
 
 spring:
   application:
     name: springboot-kafka
-  #  Kafka ??
+  #  Kafka 配置
   kafka:
     bootstrap-servers: localhost:9092
     producer:
+      transaction-id-prefix: task-tx- # 开启生产者事务（消费者事务依赖它）
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        transaction.timeout.ms: 600000 # 设置事务超时
     consumer:
       group-id: task-group
+      enable-auto-commit: false # 显式关闭自动提交
+      auto-offset-reset: earliest # 首次启动从最早消息开始消费
+      max-poll-records: 1 # 每次只拉取1条消息，保证串行
+      properties:
+        max.poll.interval.ms: 600000 # 设置任务超时
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      # ?????????????
-      auto-offset-reset: earliest
-      # ?????1????????
-      max-poll-records: 1
     listener:
-      # ???????????1???????????
-      concurrency: 1
-      # ????Offset?????????????
-      ack-mode: manual
+      concurrency: 1 # 关键：消费者并发数设为1，保证只有一个消费线程
+      ack-mode: record # 事务管理器自动提交
