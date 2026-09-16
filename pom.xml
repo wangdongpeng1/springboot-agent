@@ -31,6 +31,7 @@
         <spring-cloud-alibaba.version>2025.0.0.0</spring-cloud-alibaba.version>
         <spring-cloud.version>2025.0.1</spring-cloud.version>
         <spring-ai.version>2.0.0</spring-ai.version>
+        <langgraph4j.version>1.8.27</langgraph4j.version>
     </properties>
 
     <repositories>
@@ -80,6 +81,13 @@
                 <groupId>org.springframework.ai</groupId>
                 <artifactId>spring-ai-bom</artifactId>
                 <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.bsc.langgraph4j</groupId>
+                <artifactId>langgraph4j-bom</artifactId>
+                <version>${langgraph4j.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

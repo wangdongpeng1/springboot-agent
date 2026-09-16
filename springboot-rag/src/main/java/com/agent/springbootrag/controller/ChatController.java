@@ -1,14 +1,17 @@
 package com.agent.springbootrag.controller;
 
+import com.agent.springbootrag.langgraph.state.ChatState;
 import com.agent.springbootrag.rag.service.ChatService;
 import com.agent.springbootrag.rag.service.GraphChatService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bsc.langgraph4j.CompiledGraph;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -24,6 +27,7 @@ public class ChatController {
     private final ChatService chatService;
     private final GraphChatService graphChatService;
     private final ObjectMapper objectMapper;
+    private final CompiledGraph<ChatState> chatGraph;
 
     /**
      * Agent-Hybrid Ask
@@ -112,5 +116,22 @@ public class ChatController {
             } catch (Exception ignored) {}
         }
         return emitter;
+    }
+
+    @PostMapping
+    public String chat(@RequestParam String question) throws Exception {
+        Map<String, Object> input = Map.of(
+                ChatState.QUESTION,
+                question
+        );
+
+        var outputs = chatGraph.stream(input)
+                .stream()
+                .peek(output -> System.out.println("node = " + output.node()))
+                .toList();
+
+        return outputs.getLast()
+                .state()
+                .answer();
     }
 }

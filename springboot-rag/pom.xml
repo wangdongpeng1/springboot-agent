@@ -57,6 +57,30 @@
 			<artifactId>spring-boot-starter-data-neo4j</artifactId>
 		</dependency>
 
+		<!-- LangGraph4j 核心 -->
+		<dependency>
+			<groupId>org.bsc.langgraph4j</groupId>
+			<artifactId>langgraph4j-core</artifactId>
+		</dependency>
+
+		<!-- LangGraph4j 集成 -->
+		<dependency>
+			<groupId>org.bsc.langgraph4j</groupId>
+			<artifactId>langgraph4j-spring-ai</artifactId>
+		</dependency>
+
+		<!-- LangGraph4j AgentExecutor -->
+		<dependency>
+			<groupId>org.bsc.langgraph4j</groupId>
+			<artifactId>langgraph4j-springai-agentexecutor</artifactId>
+		</dependency>
+
+		<!-- LangGraph4j Studio -->
+		<dependency>
+			<groupId>org.bsc.langgraph4j</groupId>
+			<artifactId>langgraph4j-studio-springboot</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

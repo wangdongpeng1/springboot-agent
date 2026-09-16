@@ -61,3 +61,83 @@ springboot-rag
                        ↓
                    Answer
 ```
+**LangGraph4j**
+- 官方文档 https://langgraph4j.github.io/langgraph4j/
+- 浏览器访问 http://localhost:<port>/?instance=<instance_id>
+
+#### Agentic Workflow
+
+```
+                    ┌──────────────┐
+                    │    START     │
+                    └──────┬───────┘
+                           ↓
+                    ┌──────────────┐
+                    │    rewrite   │
+                    └──────┬───────┘
+                           ↓
+                    ┌──────────────┐
+                    │   classify   │
+                    └──────┬───────┘
+                           │
+                  ┌────────┴────────┐
+                  │                 │
+               NORMAL              RAG
+                  │                 │
+                  ↓                 ↓
+              ┌───────┐       ┌──────────┐
+              │normal │       │   rag    │
+              └───┬───┘       └────┬─────┘
+                  │                 │
+                  │                 ↓
+                  │            ┌─────────┐
+                  │            │ answer  │
+                  │            └────┬────┘
+                  │                 │
+                  └────────┬────────┘
+                           ↓
+                         END
+```
+#### Agentic Workflow Upgrade (AI Workflow Orchestrator)
+
+```
+                    ┌───────────────────────┐
+                    │      User Query       │
+                    └───────────┬───────────┘
+                                ↓
+                       ┌────────────────┐
+                       │ Rewrite Query  │
+                       └───────┬────────┘
+                               ↓
+                       ┌────────────────┐
+                       │ Multi Query    │
+                       │ Expansion      │
+                       └───────┬────────┘
+                               ↓
+                     ┌────────────────────┐
+                     │   Intent Router    │
+                     └─────────┬──────────┘
+                               │
+              ┌────────────────┼────────────────┐
+              │                │                │
+              ↓                ↓                ↓
+          Normal             RAG             Agent
+              │                │                │
+              │       ┌────────┴───────┐        │
+              │       ↓                ↓        │
+              │    Milvus            Neo4j      │
+              │       │                │        │
+              │       └───────┬────────┘        │
+              │               ↓                 │
+              │          DocumentJoin            │
+              │               ↓                 │
+              │             Rerank               │
+              │               ↓                 │
+              └───────────────┼─────────────────┘
+                              ↓
+                          LLM Answer
+                              ↓
+                         Chat Memory
+                              ↓
+                             END
+```
