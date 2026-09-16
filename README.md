@@ -1,6 +1,6 @@
 # SpringBoot AI Agent Platform
 
-基于 Spring Boot 4.1 + Spring AI 2.0 构建的 AI 代理服务平台，采用多模块微服务架构，集成 RAG 增强生成、MCP 协议通信、流量治理、OCR 图文分析等核心能力。
+基于 Spring Boot 4.1 + Spring AI 2.0 构建的 AI 代理服务平台，采用多模块微服务架构，集成 RAG 增强生成、LangGraph4j Agent 工作流编排、MCP 协议通信、流量治理、OCR 图文分析等核心能力。
 
 ## 技术栈
 
@@ -9,6 +9,7 @@
 | Java | 21 | LTS 长期支持版本 |
 | Spring Boot | 4.1.0 | 核心框架 |
 | Spring AI | 2.0.0 | AI 能力集成 |
+| LangGraph4j | 1.8.27 | Java Agentic Workflow 编排，支持状态图、条件路由、工具调用与 Studio 可视化 |
 | Spring Cloud | 2025.0.1 | 微服务治理 |
 | Spring Cloud Alibaba | 2025.0.0.0 | Sentinel 流量治理 |
 | Ollama | - | 本地大模型推理（qwen2.5:7b） |
@@ -24,7 +25,7 @@
 ```
 springboot-agent/
 ├── springboot-gateway/        # API 网关
-├── springboot-rag/            # RAG 增强生成
+├── springboot-rag/            # RAG 增强生成 & Agent 工作流
 ├── springboot-sentinel/       # 流量治理
 ├── springboot-kafka/          # Kafka 异步任务队列
 ├── springboot-mcp-host/       # MCP 客户端（工具库）
@@ -47,15 +48,18 @@ springboot-agent/
 
 ### springboot-rag — RAG 增强生成
 
-基于 **Spring AI** 实现的检索增强生成（Retrieval-Augmented Generation）服务。
+基于 **Spring AI** 和 **LangGraph4j** 实现的检索增强生成（Retrieval-Augmented Generation）与 Agent 工作流编排服务。
 
 - 端口：`8080`
-- 核心能力：文档向量化、知识库问答、对话记忆、知识图谱
+- 核心能力：文档向量化、知识库问答、对话记忆、知识图谱、Agent 工作流编排
 - 技术组件：
   - **Ollama**：本地大模型推理（对话模型 qwen2.5:7b，嵌入模型 nomic-embed-text）
   - **Milvus**：向量数据库，存储文档嵌入向量
   - **Neo4j**：图数据库，构建知识图谱
   - **Redis**：对话记忆缓存
+  - **LangGraph4j**：面向 Java 生态的 Agentic Workflow 编排框架，可通过 `StateGraph` 将状态、节点、条件边和工具调用组织为可执行工作流；本项目在 `ChatGraph` 中按 `NORMAL` / `RAG` / `AGENT` 意图分流，并通过 `AgentExecutor` 接入 Spring AI 工具调用
+- LangGraph Studio：启动 `springboot-rag` 后可访问 `http://localhost:8080/?instance=chat` 查看 `Chat Graph` 实例，或使用 `?instance=default` 查看测试工作流
+- 官方文档：<https://langgraph4j.github.io/langgraph4j/>
 - 附带 Web UI（`rag-ui/`）：基于 React + TypeScript 的前端界面，支持知识图谱可视化和对话交互
 
 ### springboot-sentinel — 流量治理
