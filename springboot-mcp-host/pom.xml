@@ -24,6 +24,11 @@
             <artifactId>spring-ai-starter-mcp-client-webflux</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.projectreactor.netty</groupId>
+            <artifactId>reactor-netty-http</artifactId>
+        </dependency>
+
         <!-- 引入fastjson2依赖 -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>

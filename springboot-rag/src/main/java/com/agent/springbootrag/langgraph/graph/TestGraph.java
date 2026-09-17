@@ -11,7 +11,7 @@ import static org.bsc.langgraph4j.action.AsyncNodeAction.node_async;
 /**
  * 定义 TestGraph 工作流
  */
-@Component
+@Component("testGraphBuilder")
 public class TestGraph {
 
     /**

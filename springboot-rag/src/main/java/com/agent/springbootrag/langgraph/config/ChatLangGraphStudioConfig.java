@@ -7,6 +7,7 @@ import org.bsc.langgraph4j.studio.springboot.LangGraphStudioConfig;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 定义 Studio 配置
@@ -34,6 +35,7 @@ public class ChatLangGraphStudioConfig extends LangGraphStudioConfig {
 
         var chatInstance = LangGraphStudioServer.Instance.builder()
                 .title("Chat Graph")
+                .addInputStringArg(ChatState.QUESTION, true, Objects::toString)
                 .graph(chatWorkflow)
                 .build();
 

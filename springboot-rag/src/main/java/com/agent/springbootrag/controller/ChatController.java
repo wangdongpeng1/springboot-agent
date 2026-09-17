@@ -130,7 +130,7 @@ public class ChatController {
                 .peek(output -> System.out.println("node = " + output.node()))
                 .toList();
 
-        return outputs.getLast()
+        return outputs.get(outputs.size() - 1)
                 .state()
                 .answer();
     }

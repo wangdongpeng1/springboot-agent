@@ -5,7 +5,6 @@ import com.agent.springbootrag.langgraph.graph.TestGraph;
 import com.agent.springbootrag.langgraph.state.ChatState;
 import org.bsc.langgraph4j.CompiledGraph;
 import org.bsc.langgraph4j.StateGraph;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,13 +21,11 @@ public class ChatGraphConfig {
     @Bean
     public StateGraph<ChatState> chatWorkflow(
             ChatGraph chatGraph,
-            ChatModel chatModel,
-            ChatClient chatClient
+            ChatModel chatModel
     ) throws Exception {
 
         return chatGraph.build(
-                chatModel,
-                chatClient
+                chatModel
         );
     }
 
