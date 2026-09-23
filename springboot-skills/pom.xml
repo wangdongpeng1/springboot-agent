@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <!--引入父工程依赖-->
+    <parent>
+        <groupId>com.agent</groupId>
+        <artifactId>springboot-agent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.agent</groupId>
+    <artifactId>springboot-skills</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>springboot-skills</name>
+    <description>springboot-skills</description>
+
+    <dependencies>
+
+        <!-- 强制使用 Spring MVC（Servlet 栈），避免 WebFlux NIO 线程阻塞冲突 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- 引入DeepSeek依赖 -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-deepseek</artifactId>
+        </dependency>
+
+        <!-- 引入Skills依赖 -->
+        <dependency>
+            <groupId>org.springaicommunity</groupId>
+            <artifactId>spring-ai-agent-utils</artifactId>
+            <version>0.12.0</version>
+        </dependency>
+
+        <!-- 引入Sandbox依赖 -->
+        <dependency>
+            <groupId>org.springaicommunity</groupId>
+            <artifactId>agent-sandbox-core</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springaicommunity</groupId>
+            <artifactId>agent-sandbox-docker</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

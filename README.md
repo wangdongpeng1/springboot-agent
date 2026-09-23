@@ -1,6 +1,6 @@
 # SpringBoot AI Agent Platform
 
-基于 Spring Boot 4.1 + Spring AI 2.0 构建的 AI 代理服务平台，采用多模块微服务架构，集成 RAG 增强生成、LangGraph4j Agent 工作流编排、MCP 协议通信、流量治理、OCR 图文分析等核心能力。
+基于 Spring Boot 4.1 + Spring AI 2.0 构建的 AI 代理服务平台，采用多模块微服务架构，集成 RAG 增强生成、LangGraph4j Agent 工作流编排、MCP 协议通信、Skills 技能调用、流量治理、OCR 图文分析等核心能力。
 
 ## 技术栈
 
@@ -32,6 +32,7 @@ springboot-agent/
 ├── springboot-mcp-sse/        # MCP Server（SSE 协议）
 ├── springboot-mcp-stream/     # MCP Server（Streamable-HTTP 协议）
 ├── springboot-ocr/            # 图文分析 & OCR
+├── springboot-skills/         # Skills 技能调用 & 沙箱执行
 ├── dockerBuild/               # Docker 构建配置
 └── wiki/                      # 项目文档
 ```
@@ -118,6 +119,22 @@ springboot-agent/
   - **MinIO**：对象存储（文件上传/下载/预签名链接/Base64 编码）
 - 工作流程：PDF → 图片转换 → MinerU OCR → Chinese-CLIP 图文匹配 → 结果存储
 
+### springboot-skills — Skills 技能调用 & 沙箱执行
+
+基于 **Spring AI**、**Spring AI Agent Utils** 和 **Agent Sandbox** 实现的 Skills 技能调用服务，用于将结构化技能说明、工具调用和隔离脚本执行接入 ChatClient。
+
+- 端口：`8080`
+- REST 接口：
+  - `GET /agent/chat?message=...`：发送用户消息，由模型根据 Skills 说明选择并调用对应工具
+- 核心能力：
+  - **SkillsTool**：从 `workspace/skills` 加载技能说明，指导模型按技能规则执行任务
+  - **ShellTools**：将 Shell 命令适配到 Sandbox 中执行，避免脚本直接在宿主机运行
+  - **FileSystemTools**：提供文件系统工具能力，支持技能执行过程中的文件读写
+  - **DockerSandbox**：默认使用 `python:3.12-slim` 镜像执行脚本，启动时会将 classpath 下的 `skills/` 同步到宿主机工作区和沙箱工作区
+- 主要配置：
+  - `agent.sandbox.image`：沙箱镜像，默认 `python:3.12-slim`
+  - `DEEPSEEK_API_KEY`：DeepSeek 模型 API Key，用于 `deepseek-chat`
+
 ## 快速开始
 
 ### 环境要求
@@ -130,6 +147,8 @@ springboot-agent/
 - Redis（RAG 模块依赖）
 - MinIO（OCR 模块依赖）
 - Kafka（Kafka 模块依赖）
+- Docker（Skills 模块 DockerSandbox 依赖）
+- DeepSeek API Key（Skills 模块依赖，可通过 `DEEPSEEK_API_KEY` 环境变量配置）
 
 ### 编译打包
 

@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+agent:
+  workspace: E:/IdeaProjects/springboot-agent/workspace
+  sandbox:
+    image: python:3.12-slim
+
+spring:
+  application:
+    name: springboot-skills
+  # OpenAI 配置
+  ai:
+    model:
+      embedding: none
+    deepseek:
+      api-key: ${DEEPSEEK_API_KEY}
+      chat:
+        model: deepseek-chat
+        max-tokens: 1000
+    chat:
+      observations:
+        log-prompt: true
+        log-completion: true
+        include-error-logging: true
+    tools:
+      observations:
+        include-content: true
+
+logging:
+  level:
+    org.springaicommunity.agent.tools: TRACE
+    org.springframework.ai.tool: TRACE
+    org.springframework.ai.chat.observation: DEBUG
+    org.springframework.ai.tool.observation: DEBUG
+
