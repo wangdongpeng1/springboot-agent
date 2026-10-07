@@ -25,6 +25,7 @@
         <module>springboot-rag</module>
         <module>springboot-ocr</module>
         <module>springboot-skills</module>
+        <module>springboot-a2a</module>
     </modules>
 
     <properties>

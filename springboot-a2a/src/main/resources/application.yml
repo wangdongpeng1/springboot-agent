@@ -1,0 +1,33 @@
+server:
+  port: 10001
+  servlet:
+    context-path: /a2a
+
+spring:
+  application:
+    name: springboot-a2a
+  ai:
+    model:
+      embedding: none
+    # DeepSeek 配置
+    deepseek:
+      api-key: ${DEEPSEEK_API_KEY}
+      chat:
+        model: deepseek-chat
+        max-tokens: 1000
+    # A2A 服务端配置
+    a2a:
+      server:
+        enabled: true
+
+# For multi-agent orchestration (Example 2), configure remote agent URLs:
+# remote.agents.urls=http://localhost:10001/foo/,http://localhost:10002/bar/
+remote:
+  agents:
+    urls: http://localhost:10001/a2a
+
+logging:
+  level:
+    io.a2a: DEBUG
+    org.springaicommunity.a2a: DEBUG
+    org.springframework.web: DEBUG

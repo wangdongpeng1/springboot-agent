@@ -135,6 +135,35 @@ springboot-agent/
   - `agent.sandbox.image`：沙箱镜像，默认 `python:3.12-slim`
   - `DEEPSEEK_API_KEY`：DeepSeek 模型 API Key，用于 `deepseek-chat`
 
+### springboot-a2a — A2A 多智能体协作 (最后一舞)
+
+基于 **Spring AI A2A Server** 和 **A2A Java SDK** 实现的多智能体协作示例，用于演示 Agent 发现、任务委派和跨 Agent 通信。
+
+该模块同时提供本地天气 Agent 和 Host Agent：天气 Agent 通过 `AgentCard` 声明自身能力，并提供天气查询工具；Host Agent 在启动时发现已配置的远程 Agent，将其能力描述注入路由提示词，再由大模型通过 `sendMessage` 工具把任务委派给合适的 Agent。
+
+- 端口：`10001`
+- 上下文路径：`/a2a`
+- REST 接口：
+  - `POST /a2a/routing/chat`：接收 `{"message":"..."}` 格式的用户请求，由 Host Agent 负责路由和任务委派
+- A2A 能力：
+  - **Agent Card**：发布 Agent 名称、描述、技能、输入输出格式等元数据，供其他 Agent 发现
+  - **Weather Agent**：提供天气查询技能，并通过 Spring AI Tool 调用天气工具
+  - **Host Agent**：读取 `remote.agents.urls` 配置，发现远程 Agent，并通过 A2A JSON-RPC 客户端发送任务
+  - **任务结果提取**：接收远程 Agent 返回的任务事件，从 Artifacts 中提取文本结果并返回给调用方
+- 示例请求：
+
+```bash
+curl -X POST http://localhost:10001/a2a/routing/chat \
+  -H "Content-Type: application/json" \
+  -d "{\"message\":\"Weather in Paris\"}"
+```
+
+参考资料：
+
+- 官网：https://spring.io/blog/2026/01/29/spring-ai-agentic-patterns-a2a-integration?utm_source=chatgpt.com
+- GitHub：https://github.com/spring-ai-community/spring-ai-a2a?utm_source=chatgpt.com
+- A2A Subagent：https://github.com/spring-ai-community/spring-ai-agent-utils/blob/main/spring-ai-agent-utils-a2a/README.md?utm_source=chatgpt.com
+
 ## 快速开始
 
 ### 环境要求
