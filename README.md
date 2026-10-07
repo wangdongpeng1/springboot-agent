@@ -8,7 +8,7 @@
 |------|------|------|
 | Java | 21 | LTS 长期支持版本 |
 | Spring Boot | 4.1.0 | 核心框架 |
-| Spring AI | 2.0.0 | AI 能力集成 |
+| Spring AI | 2.0.1 | AI 能力集成 |
 | LangGraph4j | 1.8.27 | Java Agentic Workflow 编排，支持状态图、条件路由、工具调用与 Studio 可视化 |
 | Spring Cloud | 2025.0.1 | 微服务治理 |
 | Spring Cloud Alibaba | 2025.0.0.0 | Sentinel 流量治理 |
@@ -24,6 +24,7 @@
 
 ```
 springboot-agent/
+├── springboot-a2a/            # A2A 多智能体协作
 ├── springboot-gateway/        # API 网关
 ├── springboot-rag/            # RAG 增强生成 & Agent 工作流
 ├── springboot-sentinel/       # 流量治理
