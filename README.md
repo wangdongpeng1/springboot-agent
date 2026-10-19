@@ -135,6 +135,9 @@ springboot-agent/
 - 主要配置：
   - `agent.sandbox.image`：沙箱镜像，默认 `python:3.12-slim`
   - `DEEPSEEK_API_KEY`：DeepSeek 模型 API Key，用于 `deepseek-chat`
+- 目录说明：
+  - 当前示例代码，主要适合 IDE、spring-boot:run 或资源已展开的运行方式。
+  - 如果 Jar 模式，建议将 resources/skills 目录单独挂载宿主机或者项目根目录下。
 
 ### springboot-a2a — A2A 多智能体协作 (最后一舞)
 
